@@ -4,9 +4,11 @@ import leonardojpy.bet_record.dto.UserDto;
 import leonardojpy.bet_record.model.User;
 import leonardojpy.bet_record.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -28,6 +30,14 @@ public class UserController {
         return users.stream()
                 .map(UserDto::new)
                 .collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(new UserDto(user)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
