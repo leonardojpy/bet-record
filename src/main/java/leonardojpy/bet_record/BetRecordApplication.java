@@ -20,26 +20,4 @@ public class BetRecordApplication {
 
 
 	}
-
-	@Bean
-	CommandLineRunner runner(UserRepository userRepo, BetRepository betRepo){
-		return args -> {
-			User user = new User();
-			user.setName("fabio");
-			user.setEmail("fabio@test.com");
-			user.setPassword("test");
-			userRepo.save(user);
-
-			Bet bet = new Bet();
-			bet.setDate(LocalDateTime.now());
-			bet.setOdd(2.5);
-			bet.setStake(50.0);
-			bet.setResult(Result.WON);
-			bet.setUser(user);
-
-			betRepo.save(bet);
-
-			System.out.println("Added user and bet succesfully!");
-		};
-	}
 }
