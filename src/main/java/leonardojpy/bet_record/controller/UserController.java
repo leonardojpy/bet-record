@@ -1,9 +1,13 @@
 package leonardojpy.bet_record.controller;
 
+import leonardojpy.bet_record.dto.UserDto;
 import leonardojpy.bet_record.model.User;
 import leonardojpy.bet_record.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -16,6 +20,14 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user){
         return userRepository.save(user);
+    }
+
+    @GetMapping
+    public List<UserDto> getUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
 
 }
