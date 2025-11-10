@@ -1,5 +1,6 @@
 package leonardojpy.bet_record.controller;
 
+import leonardojpy.bet_record.dto.RegisterDto;
 import leonardojpy.bet_record.dto.UserDto;
 import leonardojpy.bet_record.model.User;
 import leonardojpy.bet_record.repository.UserRepository;
@@ -40,6 +41,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    
 }
 
 
