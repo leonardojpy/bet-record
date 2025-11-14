@@ -1,4 +1,4 @@
-package leonardojpy.bet_record.config;
+package leonardojpy.bet_record.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
