@@ -8,6 +8,7 @@ import leonardojpy.bet_record.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,15 @@ import java.util.Optional;
 public class AuthController {
 
     @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     @PostMapping("/register")
     public void registerUser(@RequestBody User user){
@@ -31,19 +40,27 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginData) {
+
         Optional<User> userOptional = userRepository.findByEmail(loginData.getEmail());
 
-        if (userOptional.isPresent() &&
-                userOptional.get().getPassword().equals(loginData.getPassword())) {
 
-            String token = JwtUtil.generateToken(loginData.getEmail());
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "login efetuado com sucesso");
-            response.put("token", token);
-
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("credenciais inválidas");
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciais inválidas.");
         }
+
+        User user = userOptional.get();
+
+        //.matches() compara as senhas plain text com hashed, não usar == ou .equals() nestes casos
+        if (!passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Credenciais inválidas.");
+        }
+
+        //se tudo estiver ok, gera o token
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        //retorna o token
+        return ResponseEntity.ok(token);
     }
 }
