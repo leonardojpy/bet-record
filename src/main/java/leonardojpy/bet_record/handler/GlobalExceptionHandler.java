@@ -1,4 +1,4 @@
-package handler;
+package leonardojpy.bet_record.handler;
 
 import leonardojpy.bet_record.exceptions.EmailAlreadyExistsException;
 import org.springframework.http.HttpStatus;
